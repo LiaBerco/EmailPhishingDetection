@@ -1,0 +1,6 @@
+,recall vs re-targeted attacker
+round 0 (none),0.44
+round 1,0.996
+round 2,0.998
+round 3,0.999
+one-shot uniform (S.13b),0.975

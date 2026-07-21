@@ -1,0 +1,6 @@
+,scores decreased,% clean-flagged still flagged
++40 words (untruncated),0.0,100.0
++100 words (untruncated),0.0,100.0
++300 words (untruncated),0.0,100.0
++40 words (MAX_CHARS cap),9.0,99.8
++100 words (MAX_CHARS cap),21.0,99.6

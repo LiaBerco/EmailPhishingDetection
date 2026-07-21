@@ -1,0 +1,7 @@
+,value
+campaigns (>=3 members),93.0
+e-mails in campaigns,472.0
+singletons / pairs,831.0
+largest campaign,21.0
+mean intra-campaign similarity,0.883
+weakest campaign (mean intra-sim),0.723

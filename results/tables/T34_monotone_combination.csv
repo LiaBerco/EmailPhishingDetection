@@ -1,0 +1,5 @@
+,union,union OR monotone
+dilution +0,0.998,0.998
+dilution +20,0.365,0.869
+dilution +40,0.129,0.866
+clean-ham FPR,0.0012,0.0225

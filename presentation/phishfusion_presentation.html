@@ -1,0 +1,921 @@
+<title>PhishFusion — Full Presentation</title>
+<style>
+  :root{
+    --ground:#e7ecee; --panel:#ffffff; --panel-2:#f3f6f7;
+    --ink:#152229; --muted:#5b6b73; --line:#d2dadd;
+    --attack:#d85f43; --defend:#2a9d8f; --seal:#b8912f; --build:#54666f; --info:#3d7d9a;
+    --shadow:0 10px 40px rgba(0,0,0,.28);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --ground:#0f1a20; --panel:#16242b; --panel-2:#1b2b32; --ink:#eaf0f1; --muted:#95a6ad; --line:#26363d;
+      --attack:#e97a60; --defend:#3cb6a6; --seal:#d4ab4e; --build:#7d919b; --info:#5fa3c0; }
+  }
+  :root[data-theme="light"]{ --ground:#e7ecee; --panel:#ffffff; --panel-2:#f3f6f7; --ink:#152229; --muted:#5b6b73; --line:#d2dadd;
+    --attack:#d85f43; --defend:#2a9d8f; --seal:#b8912f; --build:#54666f; --info:#3d7d9a; }
+  :root[data-theme="dark"]{ --ground:#0f1a20; --panel:#16242b; --panel-2:#1b2b32; --ink:#eaf0f1; --muted:#95a6ad; --line:#26363d;
+    --attack:#e97a60; --defend:#3cb6a6; --seal:#d4ab4e; --build:#7d919b; --info:#5fa3c0; }
+
+  *{box-sizing:border-box}
+  html,body{margin:0; height:100%}
+  body{background:#0b0f13; color:var(--ink); overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased;
+    display:flex; align-items:center; justify-content:center; height:100vh; height:100dvh}
+  body.idle{cursor:none}
+  .stage{position:relative; width:min(100vw,177.78vh); height:min(56.25vw,100vh);
+    container-type:size; background:var(--ground); overflow:hidden; box-shadow:var(--shadow)}
+
+  .eyebrow,.brand,.foot,.mono,.num,.cap,.step .sub,.chip,.layer .ln,.fusion h4,.legend span,
+  .fcard .n,.lbl2,.tog,.evi,.bl,.tbl th,.barrow .lab,.barrow .val,.tag,.kpi .l,.pillrow span,.hero-tag{
+    font-family:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace}
+
+  /* slide shell + transitions */
+  .slide{position:absolute; inset:0; font-size:2.05cqw; display:flex; flex-direction:column;
+    padding:2.4cqw 4.4cqw 4.4cqw; opacity:0; transform:translateX(7%); pointer-events:none; z-index:1}
+  .slide.is-active{opacity:1; transform:none; pointer-events:auto; z-index:2}
+  .slide.stage-left{opacity:0; transform:translateX(-7%)}
+  .slide.stage-right{opacity:0; transform:translateX(7%)}
+  @media (prefers-reduced-motion:no-preference){
+    .slide{transition:opacity .42s ease, transform .6s cubic-bezier(.16,.84,.28,1)}
+    .slide.is-active [data-anim]{animation:riseIn .56s cubic-bezier(.16,.84,.28,1) both; animation-delay:calc(var(--i,0)*65ms + 80ms)}
+    @keyframes riseIn{from{opacity:0; transform:translateY(1em)} to{opacity:1; transform:none}}
+    .slide.is-active .draw{animation:draw 1.05s ease .3s both}
+    @keyframes draw{from{stroke-dashoffset:1600} to{stroke-dashoffset:0}}
+    .slide.is-active .grow{animation:grow .7s cubic-bezier(.16,.84,.28,1) both; animation-delay:.22s}
+    @keyframes grow{from{transform:scaleX(0)} to{transform:scaleX(1)}}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .slide{transition:opacity .2s ease} .slide.stage-left,.slide.stage-right,.slide.is-active{transform:none}
+  }
+  .draw{stroke-dasharray:1600}
+
+  .chrome{display:flex; justify-content:space-between; align-items:baseline; gap:1em}
+  .eyebrow{font-size:.6em; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .eyebrow .k{color:var(--defend)}
+  .brand{font-size:.54em; letter-spacing:.08em; color:var(--muted)}
+  .foot{position:absolute; left:4.4cqw; right:4.4cqw; bottom:1.9cqw; display:flex; justify-content:space-between;
+    align-items:center; font-size:.5em; letter-spacing:.09em; color:var(--muted)}
+  .foot b{color:var(--ink); font-weight:600}
+  .title{font-size:2.35em; line-height:1.05; font-weight:800; letter-spacing:-.015em; text-wrap:balance; margin:.4em 0 .1em}
+  .title.sm{font-size:1.95em}
+  .title .accent{color:var(--defend)} .title .warn{color:var(--attack)} .title .gold{color:var(--seal)}
+  .body{flex:1; display:flex; flex-direction:column; min-height:0; justify-content:center; gap:.7em}
+  .lead{font-size:.82em; line-height:1.5; color:var(--muted); max-width:34em}
+  .lead b{color:var(--ink)}
+
+  /* components */
+  .blocks{display:grid; gap:.7em}
+  .blocks.c2{grid-template-columns:1fr 1fr} .blocks.c3{grid-template-columns:repeat(3,1fr)} .blocks.c4{grid-template-columns:repeat(4,1fr)}
+  .block{background:var(--panel-2); border:1px solid var(--line); border-radius:11px; padding:.75em .85em; display:flex; flex-direction:column; gap:.3em}
+  .block .bl{font-size:.56em; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .block p{margin:0; font-size:.68em; line-height:1.4}
+  .block p b{color:var(--ink)}
+  .block.atk{border-left:3px solid var(--attack)} .block.def{border-left:3px solid var(--defend)}
+  .block.seal{border-left:3px solid var(--seal)} .block.info{border-left:3px solid var(--info)}
+
+  .ba{display:flex; align-items:center; gap:.55em; flex-wrap:wrap}
+  .ba .v{font-size:2.2em; font-weight:800; line-height:1; font-variant-numeric:tabular-nums}
+  .ba .ar{font-size:1.3em; color:var(--muted)}
+  .ba .good{color:var(--defend)} .ba .bad{color:var(--attack)} .ba .neu{color:var(--build)}
+  .ba .lbl{font-size:.56em; color:var(--muted); align-self:flex-end; max-width:11em; line-height:1.3; margin-left:.3em}
+
+  .kpi{display:flex; gap:1.6em; flex-wrap:wrap}
+  .kpi .k{display:flex; flex-direction:column; gap:.15em}
+  .kpi .v{font-size:1.7em; font-weight:800; line-height:1; font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:.55em; letter-spacing:.06em; color:var(--muted); text-transform:uppercase}
+
+  .tbl{width:100%; border-collapse:collapse; font-size:.66em}
+  .tbl th,.tbl td{padding:.5em .7em; text-align:left; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums}
+  .tbl td{color:var(--ink)}
+  .tbl th{color:var(--muted); font-weight:600; font-size:.85em; letter-spacing:.05em}
+  .tbl td.n{text-align:right}
+  .tbl tr.hl td{background:color-mix(in srgb,var(--defend) 10%,var(--panel)); font-weight:700}
+  .tbl .win{color:var(--defend)}
+
+  .barrow{display:flex; align-items:center; gap:.7em; font-size:.64em; margin:.15em 0}
+  .barrow .lab{width:11em; color:var(--muted); flex:0 0 auto; text-align:right}
+  .bartrack{flex:1; height:1.05em; background:var(--panel-2); border-radius:5px; overflow:hidden; border:1px solid var(--line)}
+  .bartrack i{display:block; height:100%; border-radius:5px; transform-origin:left}
+  .barrow .val{width:2.6em; flex:0 0 auto; color:var(--ink); font-weight:600; text-align:right}
+
+  .pillrow{display:flex; gap:.7em; flex-wrap:wrap}
+  .pillrow span{font-size:.6em; padding:.4em .75em; border-radius:20px; border:1px solid var(--line); color:var(--muted); background:var(--panel-2); display:flex; align-items:center; gap:.45em}
+  .pillrow span .sw{width:.75em; height:.75em; border-radius:50%; display:inline-block}
+  .cap{font-size:.56em; color:var(--muted); line-height:1.45}
+  .cap b{color:var(--ink)}
+  .note{font-size:.62em; color:var(--muted); line-height:1.5; border-left:3px solid var(--seal); padding:.15em 0 .15em .8em}
+  .note b{color:var(--ink)}
+
+  /* pipeline (reused) */
+  .pipe{display:flex; align-items:center; justify-content:center; gap:.2em}
+  .step{background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:.9em .55em; text-align:center; flex:1; min-width:0; display:flex; flex-direction:column; gap:.3em; align-items:center}
+  .step .ic{font-size:1.6em; line-height:1}
+  .step .st{font-weight:750; font-size:.74em; line-height:1.1}
+  .step .sub{font-size:.52em; color:var(--muted); line-height:1.25}
+  .arrow{color:var(--muted); font-size:1.2em}
+  .step.model{border-color:var(--defend); box-shadow:0 0 0 1px var(--defend) inset} .step.out{border-color:var(--seal)}
+
+  /* defence-in-depth (reused) */
+  .layers{display:flex; flex-direction:column; gap:.45em}
+  .layer{display:flex; align-items:center; gap:.7em; padding:.55em .85em; border-radius:9px; background:var(--panel-2); border:1px solid var(--line); font-size:.72em}
+  .layer .ln{font-size:.72em; color:var(--muted); width:1.3em}
+  .layer.me{background:color-mix(in srgb,var(--defend) 14%,var(--panel)); border-color:var(--defend); font-weight:700}
+  .layer.me .tag{margin-left:auto; font-size:.66em; color:var(--defend); letter-spacing:.06em}
+  .fusion{border:1px dashed var(--line); border-radius:12px; padding:.9em; display:flex; flex-direction:column; gap:.55em}
+  .fusion h4{margin:0; font-size:.66em; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  .fbox{display:flex; align-items:center; gap:.5em}
+  .fnode{flex:1; text-align:center; padding:.6em .4em; border-radius:8px; font-size:.68em; line-height:1.15; border:1px solid var(--line)}
+  .fnode.me{border-color:var(--defend); color:var(--defend); font-weight:700}
+  .fnode.par{border-color:var(--info); color:var(--info)}
+  .fnode.dec{background:var(--seal); color:#1c1403; font-weight:700; border-color:var(--seal)}
+  .fplus{color:var(--muted)}
+
+  /* chart legend (reused) */
+  .chartwrap{flex:1; display:flex; flex-direction:column; min-height:0}
+  .chartwrap svg{width:100%; height:100%; display:block}
+  .legend{display:flex; gap:1.4em; justify-content:center; flex-wrap:wrap; margin-top:.1em}
+  .legend span{font-size:.56em; color:var(--muted); display:flex; align-items:center; gap:.45em}
+  .legend i{width:.75em; height:.75em; border-radius:50%; display:inline-block}
+
+  /* hero (title / closing) */
+  .hero{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; gap:.5em; padding:0 8cqw; overflow:hidden}
+  .hero-bg{position:absolute; left:0; right:0; bottom:0; top:auto; width:100%; height:14%; opacity:.2; z-index:0; pointer-events:none}
+  .hero > *{position:relative; z-index:1}
+  .hero-tag{font-size:.62em; letter-spacing:.28em; text-transform:uppercase; color:var(--defend); font-weight:600}
+  .hero h1{font-size:4.4em; font-weight:850; letter-spacing:-.03em; line-height:1.03; margin:0}
+  .hero h1 .dot{color:var(--defend)}
+  .hero .sub{font-size:1.02em; color:var(--muted); line-height:1.45; max-width:25em; margin:0}
+  .hero .rule{width:3.2em; height:3px; background:var(--seal); border-radius:2px; margin:.3em 0}
+  .hero .who{display:flex; align-items:baseline; gap:1em; flex-wrap:wrap; margin:0}
+  .hero .who .nm{font-size:1.5em; font-weight:800}
+  .hero .who .meta{font-family:ui-monospace,Menlo,monospace; font-size:.66em; letter-spacing:.06em; color:var(--muted)}
+  .hero .chipword{display:inline-flex; gap:.5em; align-items:center; flex-wrap:wrap; font-family:ui-monospace,Menlo,monospace; font-size:.62em; color:var(--muted); margin:.35em 0 0}
+  .hero .chipword b{color:var(--ink)} .hero .chipword .cy{color:var(--attack)}
+
+  /* slide-4 live demo */
+  .demo{flex:1; display:grid; grid-template-columns:1.3fr .85fr; gap:1.2em; align-content:center; min-height:0}
+  .demo .col{display:flex; flex-direction:column; gap:.5em; min-height:0}
+  .lbl2{font-size:.55em; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .lbl2 .mut{text-transform:none; letter-spacing:0; opacity:.8}
+  .src{font-family:inherit; font-size:.64em; line-height:1.45; border:1px solid var(--line); border-radius:10px; padding:.7em .8em; background:var(--panel); color:var(--ink); resize:none; height:5.6em; width:100%; outline:none}
+  .src:focus{border-color:var(--defend)}
+  .toggles{display:flex; gap:.55em}
+  .tog{font-size:.58em; padding:.55em .8em; border-radius:8px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); cursor:pointer; font-weight:700}
+  .tog:focus-visible{outline:2px solid var(--defend); outline-offset:2px}
+  .tog.atk.on{background:color-mix(in srgb,var(--attack) 16%,var(--panel)); border-color:var(--attack); color:var(--attack)}
+  .tog.def.on{background:color-mix(in srgb,var(--defend) 16%,var(--panel)); border-color:var(--defend); color:var(--defend)}
+  .view{font-size:.68em; line-height:1.55; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:.7em .8em; flex:1; min-height:3em; overflow:auto; word-break:break-word}
+  .view .hit{color:var(--defend); font-weight:750; background:color-mix(in srgb,var(--defend) 14%,transparent); border-radius:3px; padding:0 .12em}
+  .read{justify-content:center; gap:.65em}
+  .verdict{font-weight:800; font-size:1em; padding:.5em .7em; border-radius:9px; text-align:center; transition:.3s}
+  .verdict.caught{color:var(--defend); background:color-mix(in srgb,var(--defend) 15%,var(--panel)); border:1px solid var(--defend)}
+  .verdict.evaded{color:var(--attack); background:color-mix(in srgb,var(--attack) 15%,var(--panel)); border:1px solid var(--attack)}
+  .meter{height:.7em; border-radius:99px; background:var(--panel-2); overflow:hidden; border:1px solid var(--line)}
+  .meter i{display:block; height:100%; width:0; background:var(--defend); transition:width .55s cubic-bezier(.16,.84,.28,1), background .3s}
+  .meter.low i{background:var(--attack)}
+  .evi{font-size:.56em; color:var(--muted)} .evi b{color:var(--ink); font-weight:600}
+
+  /* presentation chrome */
+  .progress{position:absolute; top:0; left:0; height:3px; background:var(--defend); width:4%; transition:width .5s cubic-bezier(.16,.84,.28,1); z-index:20; box-shadow:0 0 8px color-mix(in srgb,var(--defend) 60%,transparent)}
+  .ui{position:absolute; z-index:21; transition:opacity .35s ease}
+  body.idle .ui{opacity:0; pointer-events:none}
+  .nav{bottom:1.3cqw; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:.7cqw;
+    background:rgba(10,16,20,.55); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:.6cqw 1cqw}
+  .nav button{all:unset; cursor:pointer; color:#dfe8ea; width:2.2cqw; height:2.2cqw; display:grid; place-items:center; border-radius:50%; font-size:1.25cqw}
+  .nav button:hover{background:rgba(255,255,255,.14)} .nav button:focus-visible{outline:2px solid var(--defend); outline-offset:2px}
+  .counter{color:#cdd7da; font-size:.95cqw; letter-spacing:.06em; min-width:4cqw; text-align:center; font-family:ui-monospace,Menlo,monospace}
+  .topright{top:1.3cqw; right:1.5cqw; display:flex; gap:.6cqw}
+  .topright button{all:unset; cursor:pointer; color:#cdd7da; background:rgba(10,16,20,.5); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:.45cqw .75cqw; font-size:.9cqw; font-family:ui-monospace,Menlo,monospace}
+  .topright button:hover{color:#fff; background:rgba(10,16,20,.7)}
+  .hint{top:1.5cqw; left:1.7cqw; color:#aeb9bc; font-family:ui-monospace,Menlo,monospace; font-size:.85cqw; letter-spacing:.05em; transition:opacity .6s ease 1.5s}
+  .hint.gone{opacity:0}
+</style>
+
+<div class="stage" id="stage">
+  <div class="progress" id="progress"></div>
+
+  <!-- 1 · TITLE -->
+  <section class="slide is-active">
+    <div class="hero">
+      <svg class="hero-bg" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true">
+        <polyline fill="none" stroke="var(--defend)" stroke-width="3" stroke-linejoin="round"
+          points="-20,55 130,25 300,60 470,20 620,68 780,22 940,58 1020,38"/>
+        <g fill="var(--seal)"><circle cx="470" cy="20" r="6"/><circle cx="780" cy="22" r="6"/></g>
+      </svg>
+      <div class="hero-tag" data-anim style="--i:0">Data Science &amp; Cyber · final project</div>
+      <h1 data-anim style="--i:1">PhishFusion<span class="dot">.</span></h1>
+      <p class="sub" data-anim style="--i:2">Content-based phishing detection with an emphasis on <b style="color:var(--ink)">adversarial robustness</b> and explainability.</p>
+      <div class="rule" data-anim style="--i:3"></div>
+      <div class="who" data-anim style="--i:4"><span class="nm">Lia Bercovitz</span><span class="meta">student a · the content / nlp detector</span></div>
+      <div class="chipword" data-anim style="--i:5">the whole project in one word: &nbsp;<b>verify</b> &nbsp;vs&nbsp; <b>v<span class="cy">е</span>rify</b> &nbsp;— can you tell them apart?</div>
+    </div>
+    <div class="foot"><span>a near-perfect score that is one invisible character from failing</span><span>PhishFusion</span></div>
+  </section>
+
+  <!-- 2 · THE PROJECT -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">02</span> · the project</span><span class="brand">what it is</span></div>
+    <h2 class="title" data-anim style="--i:1">A <span class="accent">content-only</span> phishing detector.</h2>
+    <div class="body">
+      <p class="lead" data-anim style="--i:2">My detector reads only an email's <b>subject and body</b> and decides <b>phishing or legitimate</b> — then explains why, and is stress-tested to see how it holds up when an attacker fights back.</p>
+      <div class="fusion" data-anim style="--i:3; max-width:30em">
+        <h4>One half of a fused system</h4>
+        <div class="fbox">
+          <div class="fnode me">Content · language<br>me (Lia)</div><span class="fplus">+</span>
+          <div class="fnode par">URLs · sender<br>Gilad</div><span class="fplus">&#8594;</span>
+          <div class="fnode dec">fused<br>decision</div>
+        </div>
+      </div>
+      <p class="cap" data-anim style="--i:4">The <b>fusion component is submitted jointly with Gilad</b>. This talk is my individual half — the content detector and its robustness study.</p>
+    </div>
+    <div class="foot"><span>two independent signals · when one is defeated, the other still fires</span><span>the project</span></div>
+  </section>
+
+  <!-- + MOTIVATION · social engineering (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">03</span> · motivation</span><span class="brand">why language is the signal</span></div>
+    <h2 class="title" data-anim style="--i:1">Phishing as a <span class="accent">language-based</span> attack.</h2>
+    <div class="body">
+      <p class="lead" data-anim style="--i:2">Phishing is <b>social engineering</b>: it exploits trust and emotion, not code. The manipulation lives in the <b>language</b> &mdash; so a detector that reads only the text is reading the attack itself.</p>
+      <div class="blocks c4" data-anim style="--i:3">
+        <div class="block atk"><span class="bl">authority</span><p>&ldquo;This is IT &mdash; reset your password now.&rdquo;</p></div>
+        <div class="block atk"><span class="bl">urgency</span><p>&ldquo;Your account will be suspended in 30 minutes.&rdquo;</p></div>
+        <div class="block atk"><span class="bl">reward</span><p>&ldquo;You&rsquo;ve been selected &mdash; claim your prize.&rdquo;</p></div>
+        <div class="block atk"><span class="bl">social proof</span><p>&ldquo;All your colleagues have already done it.&rdquo;</p></div>
+      </div>
+      <p class="note" data-anim style="--i:4">My detector never sees the sender or the links &mdash; only subject and body. So the whole project is a bet that the <b>language of manipulation is itself detectable</b>. Everything after this tests that bet against an attacker who fights back.</p>
+    </div>
+    <div class="foot"><span>hacking people, not computers &mdash; urgency, authority, reward, proof</span><span>motivation</span></div>
+  </section>
+
+  <!-- 3 · PROCESS / METHOD -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">03</span> · method</span><span class="brand">how I worked</span></div>
+    <h2 class="title" data-anim style="--i:1">Method: <span class="accent">build, attack, defend, repeat</span>.</h2>
+    <div class="body">
+      <div class="blocks c4" data-anim style="--i:2">
+        <div class="block"><span class="bl">1 · build</span><p>a strong, explainable model and a clean pipeline.</p></div>
+        <div class="block info"><span class="bl">2 · study</span><p>attacks from <b>academic papers</b>, prior research and known adversarial techniques.</p></div>
+        <div class="block atk"><span class="bl">3 · adapt</span><p>design attacks <b>tailored to my model</b> and its weak points.</p></div>
+        <div class="block def"><span class="bl">4 · defend</span><p>fix each weakness, then attack the fix. <b>Loop.</b></p></div>
+      </div>
+      <p class="note" data-anim style="--i:3">The vulnerable versions you'll see are <b>not failures</b> — finding and fixing them was the whole method. A score means nothing until you've tried to break it.</p>
+    </div>
+    <div class="foot"><span>the iterative loop is the contribution, not any single number</span><span>method</span></div>
+  </section>
+
+  <!-- 4 · PIPELINE -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">04</span> · the model</span><span class="brand">one email · five steps</span></div>
+    <h2 class="title" data-anim style="--i:1">The classification <span class="accent">pipeline</span>.</h2>
+    <div class="body">
+      <div class="pipe" data-anim style="--i:2">
+        <div class="step"><span class="ic">&#128229;</span><span class="st">Email</span><span class="sub">subject + body</span></div><span class="arrow">&#8594;</span>
+        <div class="step"><span class="ic">&#129529;</span><span class="st">Clean</span><span class="sub">strip URLs<br>fold look-alikes</span></div><span class="arrow">&#8594;</span>
+        <div class="step"><span class="ic">&#128290;</span><span class="st">TF-IDF</span><span class="sub">word + char<br>n-grams</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#9878;&#65039;</span><span class="st">Logistic<br>Regression</span><span class="sub">interpretable</span></div><span class="arrow">&#8594;</span>
+        <div class="step out"><span class="ic">&#127919;</span><span class="st">Decision</span><span class="sub">phishing / legit<br>+ why</span></div>
+      </div>
+      <div class="pillrow" data-anim style="--i:3">
+        <span><span class="sw" style="background:var(--defend)"></span>char n-grams &#8594; robustness</span>
+        <span><span class="sw" style="background:var(--info)"></span>linear &#8594; explainable</span>
+        <span><span class="sw" style="background:var(--seal)"></span>URLs stripped &#8594; the partner's job</span>
+      </div>
+      <p class="cap" data-anim style="--i:4">Corpus: <b>CEAS_08</b> — the one large set with both classes from a single source, so the model can't cheat by recognising provenance. Working set 26,633 emails, rebalanced to a realistic 35% phishing.</p>
+    </div>
+    <div class="foot"><span>a single mixed-class corpus kills the confound by construction</span><span>pipeline</span></div>
+  </section>
+
+  <!-- + DATA · datasets & cleaning (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">06</span> · the data</span><span class="brand">sources · cleaning · what I found</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Datasets and <span class="accent">cleaning</span>.</h2>
+    <div class="body">
+      <div data-anim style="--i:2; display:flex; gap:1.6em; align-items:flex-start">
+        <div class="block info" style="flex:1.1; gap:.6em">
+          <span class="bl">the email sets I used</span>
+          <div style="display:flex; flex-direction:column; gap:.5em; font-size:.7em; color:var(--ink)">
+            <div style="display:flex; justify-content:space-between; gap:1em"><span><b>CEAS_08</b> &mdash; main set, has both phishing and normal mail</span><b style="color:var(--defend); white-space:nowrap">26,633</b></div>
+            <div style="display:flex; justify-content:space-between; gap:1em"><span>Nazario, Enron, Ling &mdash; other sources, for a fairness test</span><span style="color:var(--muted); white-space:nowrap">test only</span></div>
+            <div style="display:flex; justify-content:space-between; gap:1em"><span>Real phishing from 2023&ndash;2025</span><b style="white-space:nowrap">1,303</b></div>
+            <div style="display:flex; justify-content:space-between; gap:1em"><span>Recent normal mail (2024)</span><b style="white-space:nowrap">3,000</b></div>
+            <div style="display:flex; justify-content:space-between; gap:1em"><span>SpamAssassin &mdash; a second set, to re-check the results</span><b style="white-space:nowrap">5,809</b></div>
+          </div>
+        </div>
+        <div class="blocks" style="flex:1">
+          <div class="block def"><span class="bl">how I cleaned it</span><p>Remove web links, tidy the spacing, cut over-long emails, drop duplicates, then balance to <b>35% phishing</b> and split into train / validation / test with a fixed seed. Everything is hashed so it can be reproduced exactly.</p></div>
+          <div class="block seal"><span class="bl">the key choice</span><p>A quick test can guess an email&rsquo;s <b>source</b> 99% of the time. So I train on <b>one</b> source (CEAS) that already has both phishing and normal mail &mdash; otherwise the model could &ldquo;cheat&rdquo; by spotting the source instead of the scam.</p></div>
+        </div>
+      </div>
+      <p class="note" data-anim style="--i:3">Two quick data checks: real emails are <b>almost all plain text</b> (the clean baseline the look-alike-letter attack later breaks); and the dates are clean &mdash; 99.7% fall in 2007&ndash;2009, with <b>none</b> of the fake &ldquo;1970&rdquo; dates you get when a missing date is filled with a zero.</p>
+    </div>
+    <div class="foot"><span>one mixed set, cleaned and hashed so the results reproduce</span><span>the data</span></div>
+  </section>
+
+  <!-- + EDA · findings (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">07</span> · eda</span><span class="brand">what the data told me first</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Exploratory data <span class="accent">analysis</span>.</h2>
+    <div class="body">
+      <div data-anim style="--i:2; display:flex; gap:1.6em; align-items:flex-start">
+        <div class="block info" style="flex:1.25; gap:.55em">
+          <span class="bl">simple features, and how they relate to phishing</span>
+          <div style="display:flex; flex-direction:column; gap:.5em; font-size:.66em; color:var(--ink)">
+            <div style="display:flex; gap:.6em; color:var(--muted)"><span style="flex:2.2">feature</span><span style="flex:1.6; text-align:right">link with &ldquo;phishing&rdquo;</span><span style="flex:1.1; text-align:right">lopsided?</span></div>
+            <div style="display:flex; gap:.6em"><span style="flex:2.2">email length</span><span style="flex:1.6; text-align:right; color:var(--attack)">&minus;0.57 (shorter)</span><span style="flex:1.1; text-align:right">mild</span></div>
+            <div style="display:flex; gap:.6em"><span style="flex:2.2">word count</span><span style="flex:1.6; text-align:right; color:var(--attack)">&minus;0.53 (fewer)</span><span style="flex:1.1; text-align:right">mild</span></div>
+            <div style="display:flex; gap:.6em"><span style="flex:2.2">digit ratio</span><span style="flex:1.6; text-align:right">&minus;0.27</span><span style="flex:1.1; text-align:right">high</span></div>
+            <div style="display:flex; gap:.6em"><span style="flex:2.2">non-ASCII ratio</span><span style="flex:1.6; text-align:right">&asymp; 0</span><span style="flex:1.1; text-align:right">very high</span></div>
+          </div>
+        </div>
+        <div class="kpi" style="flex:1; flex-direction:column; gap:1.1em">
+          <div class="k"><span class="v">p &#8810; 0.001</span><span class="l">a proper test: phishing really is shorter</span></div>
+          <div class="k"><span class="v">&asymp; 21</span><span class="l">length &amp; word-count say the same thing (VIF)</span></div>
+        </div>
+      </div>
+      <div class="blocks c2" data-anim style="--i:3">
+        <div class="block seal"><span class="bl">what the numbers mean</span><p>Phishing mail is <b>shorter</b>, and several features are very <b>lopsided</b>. So I use outlier-proof statistics (the median and rank correlation), and I keep length and word-count as <b>notes only</b>, since they repeat each other.</p></div>
+        <div class="block def"><span class="bl">the baseline for later</span><p>Normal mail is <b>almost all plain text</b> (non-ASCII &asymp; 0). That is the clean baseline the later look-alike-letter attack is built to break.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>rank statistics, a proper test, and a repetition check &mdash; standard EDA, applied</span><span>eda</span></div>
+  </section>
+
+  <!-- 5 · WHY LOGISTIC REGRESSION -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">05</span> · model choice</span><span class="brand">tested, then chosen</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Model selection: <span class="accent">Logistic Regression</span>.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <table class="tbl" data-anim style="--i:2; flex:1.1">
+        <tr><th>model (union features)</th><th>F1</th><th>MCC</th></tr>
+        <tr><td>Multinomial NB</td><td class="n">0.972</td><td class="n">0.958</td></tr>
+        <tr><td>Complement NB</td><td class="n">0.976</td><td class="n">0.964</td></tr>
+        <tr class="hl"><td>Logistic Regression</td><td class="n win">0.998</td><td class="n win">0.997</td></tr>
+        <tr><td>DistilBERT (CPU)</td><td class="n">0.984</td><td class="n">0.975</td></tr>
+      </table>
+      <div class="blocks" data-anim style="--i:3; flex:1">
+        <div class="block def"><span class="bl">results</span><p>Best validation F1; the gap over CNB is significant (McNemar, <b>p &#8810; 0.001</b>).</p></div>
+        <div class="block info"><span class="bl">requirements</span><p><b>Interpretable</b> (each token's pull = coef&#215;tfidf) and <b>fast</b> (~3 ms/email).</p></div>
+        <div class="block"><span class="bl">goal</span><p>A robustness study needs a <b>transparent</b> model. DistilBERT ties/trails and the attacks don't transfer — kept as a baseline, not the working model.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>chosen on results + requirements + the goal of the study</span><span>model choice</span></div>
+  </section>
+
+  <!-- 6 · EXPLAINABILITY -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">06</span> · explainability</span><span class="brand">why, not just what</span></div>
+    <h2 class="title title sm" data-anim style="--i:1"><span class="accent">Explainability</span> of each decision.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div class="blocks" data-anim style="--i:2; flex:1">
+        <div class="block def"><span class="bl">how it works</span><p>The model is linear over TF-IDF, so a token's contribution is <b>exactly coef &#215; tf-idf</b>, and these sum to the decision. A <b>faithful</b> explanation — not a LIME/SHAP approximation.</p></div>
+        <div class="block info"><span class="bl">two views</span><p><b>Global:</b> the top-weighted tokens overall. <b>Local:</b> the exact per-token contributions for one email.</p></div>
+      </div>
+      <div class="blocks" data-anim style="--i:3; flex:1">
+        <div class="block"><span class="bl">why it matters in cyber</span><p>An analyst must know <b>why</b> a mail was flagged — to triage, to trust, and to review false alarms. An unexplained block is not actionable.</p></div>
+        <div class="block seal"><span class="bl">the honest tension (RQ4)</span><p>The readable signal lives in the <b>word</b> features; the robust <b>character</b> features are not human-readable. Robustness and interpretability pull apart.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>coef &#215; tfidf &#8594; a transparent, auditable decision</span><span>explainability</span></div>
+  </section>
+
+  <!-- 7 · CLEAN RESULTS + IS IT REAL -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">07</span> · clean results</span><span class="brand">too good to trust</span></div>
+    <h2 class="title" data-anim style="--i:1">Clean-data performance, and its <span class="warn">limits</span>.</h2>
+    <div class="body">
+      <div class="kpi" data-anim style="--i:2">
+        <div class="k"><span class="v" style="color:var(--defend)">0.998</span><span class="l">F1</span></div>
+        <div class="k"><span class="v" style="color:var(--defend)">0.997</span><span class="l">MCC</span></div>
+        <div class="k"><span class="v" style="color:var(--defend)">1.00</span><span class="l">AUC</span></div>
+        <div class="k"><span class="v">4 / 4</span><span class="l">FP / FN of 5,327</span></div>
+      </div>
+      <p class="note" data-anim style="--i:3">A near-perfect score is a property of <b>clean, single-corpus data</b> — not proof the detector works in the wild. So the rest of the project asks the real questions: does it survive <b>obfuscation</b>, an <b>adaptive attacker</b>, a <b>change of corpus</b>, and the <b>passage of time</b>?</p>
+      <p class="cap" data-anim style="--i:4">From here on, I deliberately attack my own model.</p>
+    </div>
+    <div class="foot"><span>the accuracy paradox: a model can score 65% and catch zero phishing</span><span>clean results</span></div>
+  </section>
+
+  <!-- 8 · ATTACK 1 SETUP -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">08</span> · attack 1 &middot; setup</span><span class="brand">homoglyph obfuscation</span></div>
+    <h2 class="title" data-anim style="--i:1">Homoglyph obfuscation.</h2>
+    <div class="body">
+      <div class="ba" data-anim style="--i:2"><span class="v neu">0.99</span><span class="lbl">recall on phishing, clean — the model to beat</span></div>
+      <div class="blocks c3" data-anim style="--i:3">
+        <div class="block atk"><span class="bl">motivation</span><p>Attackers have mangled text for decades. Homoglyphs are <b>imperceptible</b> and cost nothing (Eger 2019; Boucher 2022).</p></div>
+        <div class="block"><span class="bl">how</span><p>Swap Latin letters for identical-looking <b>Cyrillic</b> ones (а е о с …) + leetspeak (cl1ck).</p></div>
+        <div class="block"><span class="bl">why it breaks</span><p>Word features match <b>exact strings</b>. A look-alike is a new, unknown token — the phishing words simply <b>vanish</b>.</p></div>
+      </div>
+      <p class="cap" data-anim style="--i:4">Next slide: see it happen live.</p>
+    </div>
+    <div class="foot"><span>a human reads the same word; the model sees a different one</span><span>attack 1</span></div>
+  </section>
+
+  <!-- 9 · LIVE DEMO -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">09</span> · attack 1 &middot; live</span><span class="brand">break it on stage</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">A live demonstration of <span class="warn">evasion</span>.</h2>
+    <div class="body">
+      <div class="demo">
+        <div class="col">
+          <div class="lbl2" data-anim style="--i:2">The email <span class="mut">— edit me</span></div>
+          <textarea id="demoSrc" class="src" spellcheck="false" data-anim style="--i:2.2">Urgent: your account shows unusual activity. Verify your password now to confirm your identity, or your account will be suspended. Click the secure link to login.</textarea>
+          <div class="toggles" data-anim style="--i:2.5">
+            <button class="tog atk" id="togAtk" type="button" aria-pressed="false">&#9312; Homoglyph attack</button>
+            <button class="tog def" id="togDef" type="button" aria-pressed="false">&#9313; Normalise defence</button>
+          </div>
+          <div class="lbl2" data-anim style="--i:2.8">What the detector sees</div>
+          <div id="demoView" class="view" data-anim style="--i:3"></div>
+        </div>
+        <div class="col read" data-anim style="--i:3.4">
+          <div id="demoVerdict" class="verdict caught">PHISHING — caught</div>
+          <div class="meter" id="demoMeterWrap"><i id="demoMeter"></i></div>
+          <div class="evi"><b id="demoCount">0</b> phishing words matched · evidence <b id="demoEvi">0</b>%</div>
+          <p class="cap">Illustrative word-matcher. The real 60k-feature model behaves the same way: <b>recall 0.99 &#8594; 0.71 &#8594; 0.99</b>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>toggle &#9312; the attack, then &#9313; the defence</span><span>live demo</span></div>
+  </section>
+
+  <!-- 10 · DEFENCE 1 -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">10</span> · attack 1 &middot; defence</span><span class="brand">char n-grams + normalise</span></div>
+    <h2 class="title" data-anim style="--i:1">Defences: <span class="accent">normalisation</span> and character n-grams.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div data-anim style="--i:2; flex:1; display:flex; flex-direction:column; gap:.5em">
+        <div class="barrow"><span class="lab">clean</span><div class="bartrack"><i class="grow" style="width:99%; background:var(--defend)"></i></div><span class="val">0.99</span></div>
+        <div class="barrow"><span class="lab">homoglyph attack</span><div class="bartrack"><i class="grow" style="width:71%; background:var(--attack)"></i></div><span class="val">0.71</span></div>
+        <div class="barrow"><span class="lab">+ normalise</span><div class="bartrack"><i class="grow" style="width:99%; background:var(--defend)"></i></div><span class="val">0.99</span></div>
+        <div class="barrow"><span class="lab">full-width [unseen]</span><div class="bartrack"><i class="grow" style="width:68%; background:var(--attack)"></i></div><span class="val">0.68</span></div>
+        <div class="barrow"><span class="lab">+ normalise</span><div class="bartrack"><i class="grow" style="width:99%; background:var(--defend)"></i></div><span class="val">0.99</span></div>
+      </div>
+      <div class="blocks" data-anim style="--i:3; flex:1">
+        <div class="block def"><span class="bl">the fix</span><p><b>Character n-grams</b> (cl1ck still shares chunks with click) + <b>normalisation</b>: fold look-alikes back to plain letters before classifying.</p></div>
+        <div class="block seal"><span class="bl">why it generalises</span><p>It even repairs an attack it was <b>never designed for</b> (full-width letters) — via generic Unicode folding, not a hand-listed rule.</p></div>
+        <div class="block"><span class="bl">result</span><p>Word recall <b>0.71 &#8594; 0.99</b>. Adversarial training is complementary; stacked, they cover every family.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>a principled defence beats a memorised one on unseen attacks</span><span>defence 1</span></div>
+  </section>
+
+  <!-- 11 · ATTACK 2 SETUP -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">11</span> · attack 2 &middot; setup</span><span class="brand">the adaptive attacker</span></div>
+    <h2 class="title" data-anim style="--i:1">A stronger, <span class="warn">importance-guided</span> attacker.</h2>
+    <div class="body">
+      <div class="ba" data-anim style="--i:2"><span class="v good">0.99</span><span class="lbl">the fully-defended model — can it be beaten?</span></div>
+      <div class="blocks c3" data-anim style="--i:3">
+        <div class="block atk"><span class="bl">the idea</span><p>A real attacker doesn't change letters at random. It aims at the exact <b>words the model trusts most</b>, and uses look-alike letters my defence&rsquo;s list happens to <b>miss</b> (a known attack family: DeepWordBug, TextBugger, HotFlip).</p></div>
+        <div class="block"><span class="bl">how</span><p>Sort words by how much the model relies on them; disguise only the <b>top few</b>, using look-alikes that aren&rsquo;t on my list.</p></div>
+        <div class="block"><span class="bl">why it breaks</span><p>My hand-made list is <b>incomplete</b>. Just <b>8</b> well-aimed edits cut recall to <b>0.74</b> (random edits leave it at 0.98); even the fully-defended model drops to <b>0.88</b>.</p></div>
+      </div>
+      <p class="cap" data-anim style="--i:4">A typical email flips after just <b>9 invisible edits</b>. The defence helped &mdash; but a capable attacker found the gap.</p>
+    </div>
+    <div class="foot"><span>the strongest form of "no silver bullet"</span><span>attack 2</span></div>
+  </section>
+
+  <!-- 12 · DEFENCE 2 -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">12</span> · attack 2 &middot; defence</span><span class="brand">UTS-39 certificate</span></div>
+    <h2 class="title" data-anim style="--i:1">Closing the gap with a <span class="gold">certificate</span>.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div class="blocks" data-anim style="--i:2; flex:1.05">
+        <div class="block def"><span class="bl">the fix</span><p>Swap my hand-made list for the <b>full official list</b> of look-alike characters (Unicode UTS #39) &mdash; the same one browsers use to catch fake web addresses. The letters the attacker slipped through are all on it.</p></div>
+        <div class="block seal"><span class="bl">the guarantee</span><p>Even in the worst case, cleaning the attacked email gives back <b>exactly the original text</b> for <b>100%</b> of phishing (0% with the old list). So the decision <b>provably cannot change</b>.</p></div>
+        <div class="block info"><span class="bl">from the model side</span><p>Training the model on these attacks too lifts recall <b>0.44 &#8594; 0.999</b>.</p></div>
+      </div>
+      <div data-anim style="--i:3; flex:.8; display:flex; flex-direction:column; gap:.9em; align-items:center">
+        <div class="ba"><span class="v bad">0.88</span><span class="ar">&#8594;</span><span class="v good">0.998</span></div>
+        <div style="text-align:center"><div style="font-size:2.6em; font-weight:850; color:var(--seal); line-height:1">100%</div><div class="cap" style="text-align:center">provably unchanged<br>vs 0% with the old list</div></div>
+      </div>
+    </div>
+    <div class="foot"><span>the arms race ends by raising the cost of attack, not by a silver bullet</span><span>defence 2</span></div>
+  </section>
+
+  <!-- 13 · ATTACK 3 SETUP -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">13</span> · attack 3 &middot; setup</span><span class="brand">dilution</span></div>
+    <h2 class="title" data-anim style="--i:1">Word-level attacks: <span class="warn">dilution</span>.</h2>
+    <div class="body">
+      <div class="ba" data-anim style="--i:2"><span class="v good">0.998</span><span class="ar">&#8594;</span><span class="v bad">0.13</span><span class="lbl">recall collapses under padding</span></div>
+      <div class="blocks c3" data-anim style="--i:3">
+        <div class="block atk"><span class="bl">motivation</span><p>With letters closed by proof, the attacker moves to <b>words</b>. This is the classic <b>good-word attack</b> (Lowd &amp; Meek 2005): bury the scam in legit-sounding filler.</p></div>
+        <div class="block"><span class="bl">how</span><p>Insert strongly-legitimate words until the linear sum tips the other way.</p></div>
+        <div class="block"><span class="bl">why it breaks</span><p>A linear bag-of-words just <b>adds up</b> evidence — enough ham words out-vote the scam. The letter-defence does <b>nothing</b> here (0.997).</p></div>
+      </div>
+      <p class="cap" data-anim style="--i:4">Wrong defence for the wrong attack — a structural weakness, not a bug.</p>
+    </div>
+    <div class="foot"><span>bag-of-words is inherently vulnerable to dilution</span><span>attack 3</span></div>
+  </section>
+
+  <!-- 14 · DEFENCE 3 -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">14</span> · attack 3 &middot; defence</span><span class="brand">a second certificate</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">A monotone, <span class="gold">dilution-proof</span> model &mdash; and its cost.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div class="blocks" data-anim style="--i:2; flex:1.1">
+        <div class="block seal"><span class="bl">the fix &mdash; a one-way model</span><p>Build a model where every word can only <b>add</b> suspicion, never subtract it. Then adding text can only push the score <b>up</b> &mdash; so padding <b>provably cannot</b> clear a scam. Checked: <b>0</b> drops, 100% stay flagged after +40/+100/+300 words.</p></div>
+        <div class="block atk"><span class="bl">the honest cost</span><p>Clean F1 <b>0.998 &#8594; 0.912</b>, because it can only look for <b>guilt</b>, never innocence. A guaranteed <b>safety net</b>, not a replacement.</p></div>
+        <div class="block def"><span class="bl">used together</span><p>Run both, and flag if <b>either</b> fires &#8594; a guaranteed floor of <b>0.87</b> even under heavy padding, at ~2% false alarms. (Training on the attack also fixes it: 0.28 &#8594; 1.0.)</p></div>
+      </div>
+      <div data-anim style="--i:3; flex:.75; display:flex; flex-direction:column; gap:.4em">
+        <div class="barrow"><span class="lab">standard · diluted</span><div class="bartrack"><i class="grow" style="width:13%; background:var(--attack)"></i></div><span class="val">0.13</span></div>
+        <div class="barrow"><span class="lab">monotone · diluted</span><div class="bartrack"><i class="grow" style="width:87%; background:var(--defend)"></i></div><span class="val">0.87</span></div>
+        <div class="barrow"><span class="lab">monotone · clean F1</span><div class="bartrack"><i class="grow" style="width:91%; background:var(--seal)"></i></div><span class="val">0.91</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>two attack classes now closed by proof: letters, and word-insertion</span><span>defence 3</span></div>
+  </section>
+
+  <!-- 15 · REALITY CHECK I -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">15</span> · reality check &middot; space</span><span class="brand">cross-corpus</span></div>
+    <h2 class="title" data-anim style="--i:1"><span class="accent">Cross-corpus</span> generalisation.</h2>
+    <div class="body">
+      <div class="ba" data-anim style="--i:2"><span class="v good">0.998</span><span class="ar">&#8594;</span><span class="v bad">0.37</span><span class="lbl">F1, trained on CEAS &#8594; tested on other corpora</span></div>
+      <div class="blocks c2" data-anim style="--i:3">
+        <div class="block info"><span class="bl">diagnosed, not just reported</span><p>Not a total loss: OOD <b>AUC is still 0.78</b> and the model is merely under-confident. Re-thresholding recovers F1 to <b>0.75</b> — a prior/threshold shift.</p></div>
+        <div class="block atk"><span class="bl">the real gap that remains</span><p>A genuine <b>vocabulary gap</b>: out-of-vocabulary rate 7% &#8594; <b>20%</b>. The headline 0.37 overstates it, but a domain gap is real.</p></div>
+      </div>
+      <p class="cap" data-anim style="--i:4">The honest number for the wild is the cross-corpus one — not the flattering in-corpus 0.998.</p>
+    </div>
+    <div class="foot"><span>laboratory numbers do not survive a change of corpus</span><span>reality check I</span></div>
+  </section>
+
+  <!-- 16 · REALITY CHECK II -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">16</span> · reality check &middot; time</span><span class="brand">2023&ndash;2025 phishing</span></div>
+    <h2 class="title" data-anim style="--i:1">Concept <span class="warn">drift</span> on 2023&ndash;2025 phishing.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div data-anim style="--i:2; flex:.7; text-align:center">
+        <div style="font-size:3.6em; font-weight:850; color:var(--attack); line-height:1">14%</div>
+        <div class="cap" style="text-align:center">of 1,303 real 2023&ndash;25 phishing<br>emails caught &mdash; concept drift</div>
+      </div>
+      <div class="blocks" data-anim style="--i:3; flex:1.1">
+        <div class="block"><span class="bl">the threat is real, not a straw man</span><p>Homoglyph &amp; zero-width obfuscation is <b>&asymp;0% in 2008</b> phishing but <b>1.8% / 4.0%</b> in modern phishing — the very tricks I defend against are an emerging technique.</p></div>
+        <div class="block info"><span class="bl">why it matters</span><p>A lab number has a <b>shelf life</b>. This is the strongest argument that a frozen detector is not enough.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>drift in space (corpus) and time (year) — both measured</span><span>reality check II</span></div>
+  </section>
+
+  <!-- 17 · EVOLVE -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">17</span> · keep it current</span><span class="brand">evolve</span></div>
+    <h2 class="title" data-anim style="--i:1"><span class="accent">Retraining</span> on modern examples.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div data-anim style="--i:2; flex:1; display:flex; flex-direction:column; gap:.5em">
+        <div class="barrow"><span class="lab">2008 model · modern scams</span><div class="bartrack"><i class="grow" style="width:15%; background:var(--attack)"></i></div><span class="val">0.15</span></div>
+        <div class="barrow"><span class="lab">evolved · modern scams</span><div class="bartrack"><i class="grow" style="width:98%; background:var(--defend)"></i></div><span class="val">0.98</span></div>
+        <div class="barrow"><span class="lab">evolved · old scams (forgetting?)</span><div class="bartrack"><i class="grow" style="width:99.8%; background:var(--defend)"></i></div><span class="val">1.00</span></div>
+      </div>
+      <div class="blocks" data-anim style="--i:3; flex:1">
+        <div class="block def"><span class="bl">result</span><p>Recall on modern scams <b>0.15 &#8594; 0.98</b>, with <b>no forgetting</b> and <b>no rise in false alarms</b> (0.7%).</p></div>
+        <div class="block seal"><span class="bl">done honestly</span><p>The legitimate-mail source is left <b>unchanged</b>, to avoid the "cheating trap" — a provenance confound the project measures and discloses.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>a detector kept current works; a frozen one goes blind</span><span>evolve</span></div>
+  </section>
+
+  <!-- 18 · WHAT CHANGED -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">18</span> · the arc</span><span class="brand">what changed after each defence</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Recall across attacks and <span class="accent">defences</span>.</h2>
+    <div class="body">
+      <div class="chartwrap" data-anim style="--i:2">
+        <svg viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Recall through the arms race">
+          <g stroke="var(--line)" stroke-width="1"><line x1="70" y1="25" x2="960" y2="25"/><line x1="70" y1="185" x2="960" y2="185" stroke-dasharray="3 5"/><line x1="70" y1="345" x2="960" y2="345"/></g>
+          <g fill="var(--muted)" font-family="ui-monospace,Menlo,monospace" font-size="12" text-anchor="end"><text x="60" y="29">1.0</text><text x="60" y="189">0.5</text><text x="60" y="349">0.0</text></g>
+          <polyline class="draw" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linejoin="round" points="95,25 210,47 330,25 450,63 570,25 690,303 810,29"/>
+          <polyline fill="none" stroke="var(--seal)" stroke-width="2.5" stroke-dasharray="4 6" points="810,29 930,130"/>
+          <circle cx="570" cy="25" r="14" fill="none" stroke="var(--seal)" stroke-width="2.5"/><circle cx="810" cy="29" r="14" fill="none" stroke="var(--seal)" stroke-width="2.5"/>
+          <g stroke="var(--ground)" stroke-width="3">
+            <circle cx="95" cy="25" r="7.5" fill="var(--build)"/><circle cx="210" cy="47" r="7.5" fill="var(--attack)"/><circle cx="330" cy="25" r="7.5" fill="var(--defend)"/>
+            <circle cx="450" cy="63" r="7.5" fill="var(--attack)"/><circle cx="570" cy="25" r="7.5" fill="var(--defend)"/><circle cx="690" cy="303" r="7.5" fill="var(--attack)"/>
+            <circle cx="810" cy="29" r="7.5" fill="var(--defend)"/><circle cx="930" cy="130" r="6.5" fill="var(--seal)"/></g>
+          <g font-family="ui-monospace,Menlo,monospace" font-size="12" font-weight="600" text-anchor="middle">
+            <text x="95" y="15" fill="var(--build)">1.00</text><text x="210" y="66" fill="var(--attack)">0.93</text><text x="330" y="15" fill="var(--defend)">1.00</text>
+            <text x="450" y="82" fill="var(--attack)">0.88</text><text x="570" y="15" fill="var(--defend)">1.00</text><text x="690" y="326" fill="var(--attack)">0.13</text><text x="810" y="17" fill="var(--defend)">0.99</text></g>
+          <g font-family="ui-monospace,Menlo,monospace" font-size="11.5" fill="var(--muted)" text-anchor="middle">
+            <text x="95" y="392">clean</text><text x="210" y="392" fill="var(--attack)">homoglyph</text><text x="330" y="392" fill="var(--defend)">+normalise</text><text x="450" y="392" fill="var(--attack)">targeted</text>
+            <text x="570" y="392" fill="var(--defend)">UTS-39</text><text x="690" y="392" fill="var(--attack)">dilution</text><text x="810" y="392" fill="var(--defend)">monotone</text><text x="930" y="392" fill="var(--seal)">rewording</text></g>
+          <text x="930" y="120" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="var(--seal)" text-anchor="middle">&#128275;</text>
+        </svg>
+      </div>
+      <div class="legend" data-anim style="--i:3">
+        <span><i style="background:var(--attack)"></i>attack drops recall</span><span><i style="background:var(--defend)"></i>defence restores it</span><span><i style="background:var(--seal)"></i>closed by proof &middot; &#128273; certificate &middot; &#128275; open frontier</span>
+      </div>
+    </div>
+    <div class="foot"><span>every fix provoked a smarter attack — two are now closed by proof</span><span>the arc</span></div>
+  </section>
+
+  <!-- + CORE · what this project shows (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">19</span> · the core</span><span class="brand">the bottom line</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">What this project <span class="accent">shows</span>.</h2>
+    <div class="body">
+      <p class="lead" data-anim style="--i:2">On clean data the detector is almost perfect. The real work was showing that this score is <b>fragile</b>, finding exactly where it breaks, and fixing it &mdash; until two whole kinds of attack are shut with a <b>proof</b>, not just a better number.</p>
+      <div class="blocks c3" data-anim style="--i:3">
+        <div class="block def"><span class="bl">it works, and it&rsquo;s honest</span><p>Near-perfect on clean mail (<b>F1 0.998</b>), and every claim is tested against an attacker who fights back &mdash; not just on easy examples.</p></div>
+        <div class="block seal"><span class="bl">two attacks shut by proof</span><p>Look-alike letters and padding <b>provably</b> cannot slip a scam past the detector. That is a guarantee, not a lucky number.</p></div>
+        <div class="block atk"><span class="bl">it knows its limits</span><p>Reading words alone can&rsquo;t catch everything &mdash; which is exactly why it is <b>fused</b> with a second detector that reads the links and the sender.</p></div>
+      </div>
+      <p class="note" data-anim style="--i:4">The core idea in one line: <b>a near-perfect score is not the same as a safe detector.</b> The value is knowing where it fails, and proving where it cannot.</p>
+    </div>
+    <div class="foot"><span>a perfect-looking score, stress-tested until it earns trust</span><span>the core</span></div>
+  </section>
+
+  <!-- 19 · MODEL SUMMARY -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">19</span> · summary</span><span class="brand">the final model</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Summary of the <span class="accent">final model</span>.</h2>
+    <div class="body" style="gap:.8em">
+      <div class="blocks c3">
+        <div class="block def" data-anim style="--i:2"><span class="bl">the model</span><p>Word + character text features with Logistic Regression, a <b>look-alike-letter cleaner</b> in front, a <b>padding-proof safety net</b>, and a refresh on modern examples.</p></div>
+        <div class="block seal" data-anim style="--i:3"><span class="bl">what I proved</span><p><b>Two guarantees</b> &mdash; neither look-alike letters nor padding can flip a decision. Retraining fixes ageing; the scores are ready to combine with the partner detector.</p></div>
+        <div class="block atk" data-anim style="--i:4"><span class="bl">what remains open</span><p>A full <b>reword</b> by an AI; a different email source; and reading words alone &mdash; all reasons the two detectors are <b>fused</b>.</p></div>
+      </div>
+      <p class="note" data-anim style="--i:5">This is the honest end state of the content half: a strong, explainable detector, hardened where it can be and clear about where it can&rsquo;t &mdash; ready to fuse with the link / sender detector.</p>
+    </div>
+    <div class="foot"><span>honest hardening, not a solved problem</span><span>summary</span></div>
+  </section>
+
+  <!-- 20 · ADDITIONAL IDEA: LLM AS JUDGE -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">20</span> · additional idea</span><span class="brand">LLM as a judge</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">An LLM <span class="warn">paraphrase</span> attack, LLM-judged.</h2>
+    <div class="body">
+      <div class="pipe" data-anim style="--i:2">
+        <div class="step out"><span class="ic">&#129302;</span><span class="st">Attack</span><span class="sub">an LLM rewrites<br>the scam</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#9878;&#65039;</span><span class="st">Validate</span><span class="sub">a 2nd LLM judges:<br>still phishing?</span></div><span class="arrow">&#8594;</span>
+        <div class="step"><span class="ic">&#127919;</span><span class="st">Detect</span><span class="sub">score the<br>valid attacks</span></div>
+      </div>
+      <div class="blocks c2" data-anim style="--i:3">
+        <div class="block info"><span class="bl">why a judge</span><p>A rewrite that stops being a scam mustn't count as an evasion. A <b>second, independent</b> LLM validates — "LLM-as-a-judge". It kept 24 of 30.</p></div>
+        <div class="block"><span class="bl">result (small probe)</span><p>The main model shrugs it off (<b>recall 1.0</b>); the monotone model gives ground (<b>0.75 &#8594; 0.71</b>) — the honest counterweight to its certificate.</p></div>
+      </div>
+      <p class="cap" data-anim style="--i:4">Caveats stated: N is small; attacker and judge share a model family; outputs frozen &amp; committed for reproducibility.</p>
+    </div>
+    <div class="foot"><span>rewording is the one class both certificates leave open</span><span>additional idea</span></div>
+  </section>
+
+  <!-- 21 · ADDITIONAL IDEA: HUMAN IN THE LOOP -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">21</span> · additional idea</span><span class="brand">human-in-the-loop</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Human-in-the-loop <span class="accent">campaign</span> detection.</h2>
+    <div class="body">
+      <div class="pipe" data-anim style="--i:2">
+        <div class="step out"><span class="ic">&#128681;</span><span class="st">Report</span><span class="sub">one employee flags<br>a suspicious email</span></div><span class="arrow">&#8594;</span>
+        <div class="step"><span class="ic">&#128269;</span><span class="st">Match</span><span class="sub">compare every inbox<br>by text similarity</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#128737;&#65039;</span><span class="st">Contain</span><span class="sub">quarantine the<br>near-duplicates</span></div><span class="arrow">&#8594;</span>
+        <div class="step out"><span class="ic">&#129504;</span><span class="st">Learn</span><span class="sub">add the example &#8594;<br>better next time</span></div>
+      </div>
+      <div class="blocks c3" data-anim style="--i:3">
+        <div class="block def"><span class="bl">how it works</span><p>When one person reports a scam, the system compares it to every other inbox and flags the close matches. One report lifts detection of the rest from <b>15% to 100%</b>, with <b>no extra false alarms</b>.</p></div>
+        <div class="block info"><span class="bl">stated honestly</span><p>Being fair: most of that jump is just &ldquo;a recent example helps&rdquo;. The part truly from matching the campaign is <b>1.0 vs 0.33</b>. There are <b>93</b> such real campaigns in the data.</p></div>
+        <div class="block atk"><span class="bl">the catch</span><p>Look-alike letters switch it <b>off completely</b> until the normaliser cleans them first &mdash; so that defence is required, not optional. And fake reports slowly raise false alarms.</p></div>
+      </div>
+      <p class="note" data-anim style="--i:4">Why this matters more every year: attackers now <b>hijack a real, trusted account</b> and send phishing from a legitimate address. A filter that trusts the <b>sender</b> is fooled &mdash; but reading the <b>words</b> still sees that something is wrong. Content is the signal that survives a stolen account.</p>
+    </div>
+    <div class="foot"><span>report &#8594; match &#8594; contain &#8594; learn &middot; content catches what sender-trust misses</span><span>additional idea</span></div>
+  </section>
+
+  <!-- 22 · ADDITIONAL IDEA: DYNAMIC DATABASE -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">22</span> · additional idea</span><span class="brand">a living defence</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">A <span class="accent">self-updating</span> attack database.</h2>
+    <div class="body">
+      <div class="pipe" data-anim style="--i:2">
+        <div class="step out"><span class="ic">&#127381;</span><span class="st">New attack</span><span class="sub">an unseen trick from a<br>report / monitor / trap</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#9878;&#65039;</span><span class="st">Validate</span><span class="sub">is it really<br>an attack?</span></div><span class="arrow">&#8594;</span>
+        <div class="step"><span class="ic">&#128451;&#65039;</span><span class="st">Store</span><span class="sub">add to a living<br>attack database</span></div><span class="arrow">&#8594;</span>
+        <div class="step"><span class="ic">&#128260;</span><span class="st">Retrain</span><span class="sub">fold it in<br>(~30 s)</span></div><span class="arrow">&#8594;</span>
+        <div class="step out"><span class="ic">&#128737;&#65039;</span><span class="st">Defended</span><span class="sub">&#8635; ready for<br>the next one</span></div>
+      </div>
+      <div class="blocks c3" data-anim style="--i:3">
+        <div class="block def"><span class="bl">the idea</span><p>A static model ages. A <b>growing database</b> of attacks — fed by user reports, drift monitoring and honeypots — keeps the detector learning tricks it was <b>never designed for</b>.</p></div>
+        <div class="block info"><span class="bl">grounded, not hypothetical</span><p>The evolve step already proves retraining on new examples works (<b>0.15 &#8594; 0.98</b>), and a full retrain costs <b>~30 s</b> — so the loop is genuinely practical.</p></div>
+        <div class="block atk"><span class="bl">the hard part</span><p>Trusting new data. Unvetted input can be <b>poisoned</b>, so every new entry is validated (the LLM / human judge) <b>before</b> it is learned.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>from a frozen model to a standing, self-updating process</span><span>additional idea</span></div>
+  </section>
+
+  <!-- 22 · DEPLOYMENT -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">22</span> · deployment</span><span class="brand">one layer of many</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Deployment: small, fast, <span class="accent">one layer</span>.</h2>
+    <div class="body" style="flex-direction:row; gap:2em; align-items:center">
+      <div style="flex:1; display:flex; flex-direction:column; gap:1em">
+        <div class="kpi" data-anim style="--i:2">
+          <div class="k"><span class="v">~3 ms</span><span class="l">per email</span></div>
+          <div class="k"><span class="v">2.7 MB</span><span class="l">on disk</span></div>
+          <div class="k"><span class="v">~530/s</span><span class="l">per core</span></div>
+        </div>
+        <div class="blocks" data-anim style="--i:3">
+          <div class="block def"><span class="bl">runs client-side</span><p>Small enough for a phone or mail client &#8594; message content <b>never leaves the device</b> (privacy). Retrain in ~30 s &#8594; cadence is a policy choice.</p></div>
+        </div>
+      </div>
+      <div data-anim style="--i:4; flex:1">
+        <div class="layers">
+          <div class="layer"><span class="ln">1</span>SPF / DKIM / DMARC</div>
+          <div class="layer"><span class="ln">2</span>URL &amp; attachment reputation</div>
+          <div class="layer me"><span class="ln">3</span>Content detector<span class="tag">ME</span></div>
+          <div class="layer"><span class="ln">4</span>Sandbox &amp; user reporting</div>
+        </div>
+        <p class="cap" style="margin-top:.6em">This model is <b>one layer</b>. It deliberately does <b>not</b> use the sender's identity or email address — that's Gilad's half. A real deployment has more signals still.</p>
+      </div>
+    </div>
+    <div class="foot"><span>measured, not guessed · MIME / HTML / attachments not yet handled</span><span>deployment</span></div>
+  </section>
+
+  <!-- + GROUNDED · course pipeline (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">26</span> · grounded</span><span class="brand">the course pipeline</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">The project in the <span class="accent">course</span> pipeline.</h2>
+    <div class="body">
+      <div class="pipe" data-anim style="--i:2">
+        <div class="step model"><span class="ic">&#128202;</span><span class="st">Data &amp; EDA</span><span class="sub">stats · shape<br>correlation</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#128301;</span><span class="st">Clustering</span><span class="sub">phishing<br>campaigns</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#128336;</span><span class="st">Temporal</span><span class="sub">drift over<br>15 years</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#128172;</span><span class="st">NLP</span><span class="sub">TF-IDF ·<br>the detector</span></div><span class="arrow">&#8594;</span>
+        <div class="step model"><span class="ic">&#9878;&#65039;</span><span class="st">Models</span><span class="sub">fit + explain<br>+ metrics</span></div><span class="arrow">&#8594;</span>
+        <div class="step out"><span class="ic">&#128260;</span><span class="st">Improve</span><span class="sub">evolve ·<br>feedback</span></div>
+      </div>
+      <p class="note" data-anim style="--i:3">The course gave a general project pipeline &mdash; data statistics, abnormality detection, clustering, segment/temporal analysis, NLP, models, reporting, improvement. My project is a <b>deep dive</b> into the NLP + models + improvement stages, touching every earlier box along the way. The one box I deliberately leave open is <b>&ldquo;separate components&rdquo;</b> &mdash; that is the fusion with Gilad.</p>
+    </div>
+    <div class="foot"><span>one lecture&rsquo;s pipeline, instantiated end-to-end on phishing text</span><span>grounded</span></div>
+  </section>
+
+  <!-- + GROUNDED · methods & metrics (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">27</span> · grounded</span><span class="brand">methods from the lectures</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Methods drawn from the <span class="accent">course</span>.</h2>
+    <div class="body">
+      <div class="blocks c2" data-anim style="--i:2">
+        <div class="block info"><span class="bl">metrics &amp; the accuracy paradox</span><p>The metrics lecture&rsquo;s warning &mdash; a high-accuracy model can catch zero phishing &mdash; is why I report <b>F2, MCC, AUC</b> not accuracy, and why the majority baseline (accuracy high, <b>F1 = 0</b>) is in the deck.</p></div>
+        <div class="block def"><span class="bl">split · leakage · temporal</span><p><b>Stratified 60/20/20</b> (seed 42), dedupe-before-split, vectoriser fit on <b>train only</b>, and the &ldquo;you can&rsquo;t use an email from the future&rdquo; rule &mdash; the exact leakage discipline taught in class.</p></div>
+        <div class="block seal"><span class="bl">EDA statistics</span><p><b>Spearman/Kendall</b>, skewness &amp; kurtosis, median/MAD/IQR, a <b>Mann&ndash;Whitney</b> test and a <b>VIF</b> redundancy check &mdash; the EDA and statistics lectures, applied to real features.</p></div>
+        <div class="block"><span class="bl">explainability levels</span><p>The lecture&rsquo;s three levels &mdash; <b>model / feature / instance</b> &mdash; are all delivered: global weights, coef&#215;tfidf, and exact per-email contributions. The trust-vs-performance trade-off is my RQ4.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>accuracy paradox · stratified split · rank statistics · explainability levels</span><span>grounded</span></div>
+  </section>
+
+  <!-- + GROUNDED · attacks & defences (inserted) -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">28</span> · grounded</span><span class="brand">the attack taxonomy from the lectures</span></div>
+    <h2 class="title title sm" data-anim style="--i:1">Attacks and defences from the <span class="accent">course</span> taxonomy.</h2>
+    <div class="body">
+      <div class="blocks c2" data-anim style="--i:2">
+        <div class="block atk"><span class="bl">the attack taxonomy</span><p>Evasion vs poisoning, white/black-box, targeted vs transfer (Adversarial-ML lecture): my homoglyphs are <b>evasion</b>, the importance-guided attack is <b>targeted grey-box</b>, false reports are <b>poisoning</b>, and DistilBERT is the <b>transfer</b> test.</p></div>
+        <div class="block atk"><span class="bl">character &amp; tokenization attacks</span><p>The NLP-security lecture&rsquo;s own examples &mdash; <b>&ldquo;Get r1ch qu1ck&rdquo;</b>, homoglyphs (<b>paypal</b> in Cyrillic), and BPE/WordPiece breaking on perturbed tokens &mdash; are exactly my attacks and my DistilBERT sub-word point.</p></div>
+        <div class="block def"><span class="bl">normalisation as the countermeasure</span><p>The lectures name <b>canonicalising homoglyphs</b> and adversarial training as the defences. That is my <b>UTS-39 skeleton + certificate</b>, plus adversarial training &mdash; measured against each attack tier.</p></div>
+        <div class="block info"><span class="bl">anomaly detection (future work)</span><p>Isolation Forest, One-Class SVM and Mahalanobis distance from the abnormality lecture are my named next step &mdash; an adversarial-input detector for obfuscated mail.</p></div>
+      </div>
+      <p class="note" data-anim style="--i:3">And the framing for drift comes from the same course: my 2008 model is <b>Taleb&rsquo;s turkey</b> &mdash; confident right up to Thanksgiving. Relying on historical data to predict the future is exactly the inductive trap the abnormality lecture warned about.</p>
+    </div>
+    <div class="foot"><span>evasion · poisoning · transfer · normalisation · Taleb&rsquo;s turkey &mdash; the syllabus, executed</span><span>grounded</span></div>
+  </section>
+
+  <!-- 23 · FUTURE WORK -->
+  <section class="slide stage-right">
+    <div class="chrome" data-anim style="--i:0"><span class="eyebrow"><span class="k">23</span> · future work</span><span class="brand">what comes next</span></div>
+    <h2 class="title" data-anim style="--i:1">Future work.</h2>
+    <div class="body">
+      <div class="blocks c2" data-anim style="--i:2">
+        <div class="block seal"><span class="bl">close the last gap</span><p>A <b>structure-aware</b> model that resists dilution <b>without</b> losing accuracy — and a neural paraphrase attacker at real scale.</p></div>
+        <div class="block info"><span class="bl">keep it current</span><p>A time-ordered study of <b>how often to retrain</b>, and a personal-style modern ham source for a fully-clean modern retrain.</p></div>
+        <div class="block"><span class="bl">stronger baseline</span><p>A <b>GPU, full-data</b> DistilBERT run to find the transformer's real ceiling.</p></div>
+        <div class="block def"><span class="bl">the fusion</span><p>Combine with <b>Gilad's</b> URL/sender detector — the answer to the cross-corpus gap and the content-only blind spots.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>the honest open problems, named</span><span>future work</span></div>
+  </section>
+
+  <!-- 24 · CLOSING -->
+  <section class="slide stage-right">
+    <div class="hero">
+      <svg class="hero-bg" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true">
+        <polyline fill="none" stroke="var(--defend)" stroke-width="3" stroke-linejoin="round" points="-20,55 130,25 300,60 470,20 620,68 780,22 940,58 1020,38"/>
+        <g fill="var(--seal)"><circle cx="470" cy="20" r="6"/><circle cx="780" cy="22" r="6"/></g>
+      </svg>
+      <div class="hero-tag" data-anim style="--i:0">thank you</div>
+      <h1 data-anim style="--i:1; font-size:3.5em">A high-scoring detector<br>can still be <span class="dot">fragile.</span></h1>
+      <p class="sub" data-anim style="--i:2">The contribution isn't the score — it's proving <b style="color:var(--ink)">where</b> it breaks, and hardening it until two attack classes are closed by proof.</p>
+      <div class="rule" data-anim style="--i:3"></div>
+      <div class="who" data-anim style="--i:4"><span class="nm">Lia Bercovitz</span><span class="meta">PhishFusion · content detector · questions welcome</span></div>
+    </div>
+    <div class="foot"><span>build it · break it · prove it</span><span>fin</span></div>
+  </section>
+
+  <!-- persistent UI -->
+  <div class="ui hint" id="hint">&#8592; &#8594; · space · click &nbsp;|&nbsp; F fullscreen</div>
+  <div class="ui topright"><button id="themeBtn" title="Toggle light / dark">&#9681; theme</button><button id="fsBtn" title="Fullscreen (F)">&#9974; full</button></div>
+  <nav class="ui nav" id="nav" aria-label="Slide navigation">
+    <button id="prev" aria-label="Previous slide">&#8249;</button>
+    <span class="counter" id="counter">1 / 25</span>
+    <button id="next" aria-label="Next slide">&#8250;</button>
+  </nav>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var N = slides.length, cur = 0, busy = false;
+  // auto-number the eyebrow tags so inserting/reordering slides never desyncs them
+  slides.forEach(function(s,i){ var k=s.querySelector('.eyebrow .k'); if(k){ k.textContent=(i+1<10?'0':'')+(i+1); } });
+  var progress = document.getElementById('progress'), counter = document.getElementById('counter'), hint = document.getElementById('hint');
+  function render(){ progress.style.width = ((cur+1)/N*100).toFixed(3)+'%'; counter.textContent = (cur+1)+' / '+N; }
+  render();
+  function go(t){
+    t = Math.max(0, Math.min(N-1, t));
+    if(busy || t===cur) return;
+    var dir = t>cur?1:-1, incoming = slides[t], outgoing = slides[cur];
+    busy = true;
+    incoming.classList.remove('is-active','stage-left','stage-right');
+    incoming.classList.add(dir>0?'stage-right':'stage-left');
+    void incoming.offsetWidth;
+    incoming.classList.remove('stage-left','stage-right'); incoming.classList.add('is-active');
+    outgoing.classList.remove('is-active'); outgoing.classList.add(dir>0?'stage-left':'stage-right');
+    cur = t; render();
+    setTimeout(function(){ busy=false; }, 620);
+  }
+  function next(){ go(cur+1); } function prev(){ go(cur-1); }
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.addEventListener('keydown', function(e){
+    if(e.target && e.target.closest && e.target.closest('.demo')) return;
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Spacebar'){ e.preventDefault(); next(); }
+    else if(k==='ArrowLeft'||k==='PageUp'){ e.preventDefault(); prev(); }
+    else if(k==='Home'){ e.preventDefault(); go(0); }
+    else if(k==='End'){ e.preventDefault(); go(N-1); }
+    else if(k==='f'||k==='F'){ toggleFs(); }
+    wake();
+  });
+  document.getElementById('stage').addEventListener('click', function(e){
+    if(e.target.closest('.ui') || e.target.closest('.demo')) return;
+    next();
+  });
+  var tx=0,ty=0;
+  document.addEventListener('touchstart', function(e){ tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)){ dx<0?next():prev(); }
+  }, {passive:true});
+  function toggleFs(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); } else if(document.exitFullscreen){ document.exitFullscreen(); } }
+  document.getElementById('fsBtn').addEventListener('click', function(e){ e.stopPropagation(); toggleFs(); });
+  document.getElementById('themeBtn').addEventListener('click', function(e){
+    e.stopPropagation(); var r=document.documentElement, c=r.getAttribute('data-theme');
+    var isDark = c ? c==='dark' : matchMedia('(prefers-color-scheme:dark)').matches;
+    r.setAttribute('data-theme', isDark?'light':'dark');
+  });
+  setTimeout(function(){ hint.classList.add('gone'); }, 3600);
+  var idleT;
+  function wake(){ document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(function(){ document.body.classList.add('idle'); }, 2800); }
+  ['mousemove','mousedown','touchstart','keydown'].forEach(function(ev){ document.addEventListener(ev, wake, {passive:true}); });
+  wake();
+})();
+</script>
+
+<script>
+/* Slide 9 — live homoglyph demo (transparent word-matcher; not the real model, numbers cited on-slide). */
+(function(){
+  var HOMO={a:'а',b:'ь',c:'с',d:'ԁ',e:'е',g:'ɡ',h:'һ',i:'і',j:'ј',k:'к',l:'ӏ',m:'м',n:'ո',o:'о',p:'р',r:'г',s:'ѕ',t:'т',u:'υ',v:'ν',w:'ѡ',x:'х',y:'у'};
+  var CONF={}; for(var kk in HOMO){ CONF[HOMO[kk]]=kk; }
+  var LEX={verify:2,verification:2,account:2,accounts:2,password:3,passwords:3,click:1,urgent:2,urgently:2,confirm:2,security:1,secure:1,login:2,signin:2,bank:2,banking:2,update:1,alert:1,unusual:2,unauthorized:2,immediately:1,suspend:2,suspended:2,expire:1,expired:1,identity:1,link:1};
+  var CAP=10, THRESH=35, atkOn=false, defOn=false;
+  var src=document.getElementById('demoSrc'), view=document.getElementById('demoView');
+  var vEl=document.getElementById('demoVerdict'), mEl=document.getElementById('demoMeter'), mWrap=document.getElementById('demoMeterWrap');
+  var cEl=document.getElementById('demoCount'), eEl=document.getElementById('demoEvi'), tA=document.getElementById('togAtk'), tD=document.getElementById('togDef');
+  if(!src){ return; }
+  function esc(s){ return s.replace(/[&<>]/g,function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
+  function attack(t){ return t.replace(/[A-Za-z]/g,function(ch){ var lo=ch.toLowerCase(); return HOMO[lo]||ch; }); }
+  function normWord(w){ var o=''; for(var i=0;i<w.length;i++){ o+=(CONF[w[i]]||w[i]); } return o.toLowerCase(); }
+  function render(){
+    var text = atkOn ? attack(src.value) : src.value;
+    var parts = text.split(/([^\p{L}0-9]+)/u), html='', sum=0, count=0;
+    for(var i=0;i<parts.length;i++){
+      var tok=parts[i];
+      if(i%2===1){ html+=esc(tok); continue; }
+      if(!tok){ continue; }
+      var probe = defOn ? normWord(tok) : tok.toLowerCase();
+      if(Object.prototype.hasOwnProperty.call(LEX, probe)){ sum+=LEX[probe]; count++; html+='<span class="hit">'+esc(tok)+'</span>'; }
+      else { html+=esc(tok); }
+    }
+    view.innerHTML = html;
+    var evi = Math.min(100, Math.round(sum/CAP*100)), caught = evi>=THRESH;
+    mEl.style.width = evi+'%'; mWrap.classList.toggle('low', !caught);
+    cEl.textContent = count; eEl.textContent = evi;
+    vEl.className = 'verdict '+(caught?'caught':'evaded');
+    vEl.textContent = caught ? 'PHISHING — caught' : 'EVADED — reaches the inbox';
+  }
+  tA.addEventListener('click', function(e){ e.stopPropagation(); atkOn=!atkOn; tA.classList.toggle('on',atkOn); tA.setAttribute('aria-pressed',atkOn); render(); });
+  tD.addEventListener('click', function(e){ e.stopPropagation(); defOn=!defOn; tD.classList.toggle('on',defOn); tD.setAttribute('aria-pressed',defOn); render(); });
+  src.addEventListener('input', render);
+  src.addEventListener('keydown', function(e){ e.stopPropagation(); });
+  render();
+})();
+</script>

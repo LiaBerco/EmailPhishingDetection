@@ -1,0 +1,5 @@
+,original model,word-adv-trained
+clean,0.998,0.998
+synonym (40),0.998,0.998
+synonym + skeleton-norm,0.997,0.998
+dilution (20),0.284,1.0

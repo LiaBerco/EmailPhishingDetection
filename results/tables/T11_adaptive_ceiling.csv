@@ -1,0 +1,4 @@
+,word recall,union recall
+targeted-adaptive (k=8) + normalise,0.836,0.955
+targeted-adaptive (k=20) + normalise,0.673,0.879
+uniform-adaptive + normalise (T5),0.963,0.987

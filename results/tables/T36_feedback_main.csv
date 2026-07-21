@@ -1,0 +1,6 @@
+,recall on unreported campaign e-mails,FPR CEAS-ham,FPR modern-ham
+baseline (2008 model),0.149,,
+A: campaign-MATCHED,1.0,0.0012,0.0017
+A: campaign-BLIND (ablation),0.329,,
+B: one-shot retrain,0.991,,
+CONTROL: singletons (sim only),0.148,,

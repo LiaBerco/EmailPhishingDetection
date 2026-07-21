@@ -1,0 +1,16 @@
+# Core scientific stack (versions this project was developed and run with).
+numpy==2.4.0
+pandas==2.3.3
+scikit-learn==1.8.0
+scipy==1.16.3
+matplotlib==3.11.0
+
+# Notebook execution / reproduction (run_all.py uses nbconvert)
+jupyter
+nbconvert==7.17.1
+ipykernel
+
+# Optional — only for the DistilBERT comparison (section 14).
+# CPU wheels are fine; install the CUDA build of torch from pytorch.org for GPU.
+torch==2.9.1
+transformers==4.57.3

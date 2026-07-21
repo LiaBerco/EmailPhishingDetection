@@ -1,0 +1,5 @@
+,union recall,monotone recall
+clean originals (n=30),1.0,0.8
+"LLM rewrites, all (n=30)",1.0,0.767
+"originals, judge-valid (n=24)",1.0,0.75
+"LLM rewrites, judge-valid",1.0,0.708

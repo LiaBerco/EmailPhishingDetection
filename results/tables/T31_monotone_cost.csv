@@ -1,0 +1,3 @@
+,f1,mcc,recall,precision
+union LR (baseline),0.9979,0.9967,0.9979,0.9979
+monotone unigram (w>=0),0.9115,0.8689,0.8734,0.9532

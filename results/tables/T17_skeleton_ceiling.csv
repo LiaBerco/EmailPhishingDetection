@@ -1,0 +1,10 @@
+attacker,defence,word recall,union recall
+uniform-adaptive,none,0.885,0.983
+uniform-adaptive,old table,0.96,0.986
+uniform-adaptive,skeleton (UTS-39),0.993,0.998
+targeted-adaptive (k=20),none,0.676,0.88
+targeted-adaptive (k=20),old table,0.673,0.879
+targeted-adaptive (k=20),skeleton (UTS-39),0.993,0.998
+targeted-adaptive (all),none,0.633,0.865
+targeted-adaptive (all),old table,0.624,0.867
+targeted-adaptive (all),skeleton (UTS-39),0.993,0.998

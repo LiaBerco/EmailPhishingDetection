@@ -1,0 +1,5 @@
+,synonym,mask/delete,dilution-insert
+budget 5,0.998,0.959,0.97
+budget 10,0.998,0.912,0.638
+budget 20,0.998,0.809,0.284
+budget 40,0.998,0.781,0.129
