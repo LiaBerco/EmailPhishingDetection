@@ -1,0 +1,8 @@
+,word-only recall,union recall
+clean,0.992,0.998
+homoglyph+leet,0.711,0.933
+homoglyph+leet + normalise,0.992,0.998
+full-width [held-out],0.677,0.92
+full-width + normalise,0.993,0.998
+adaptive [unmapped],0.888,0.983
+adaptive + normalise,0.963,0.987

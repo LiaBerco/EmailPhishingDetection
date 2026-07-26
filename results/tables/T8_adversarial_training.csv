@@ -1,0 +1,5 @@
+,undefended,normalisation,adversarial train,adv-train + norm
+clean,0.992,0.993,0.995,0.995
+homoglyph+leet,0.711,0.992,1.0,0.995
+full-width [held-out],0.677,0.993,0.781,0.995
+adaptive [unmapped],0.888,0.963,0.938,0.983

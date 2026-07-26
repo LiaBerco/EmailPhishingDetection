@@ -1,0 +1,5 @@
+,union recall,monotone recall
+dilution +0,0.998,0.869
+dilution +10,0.632,0.869
+dilution +20,0.365,0.869
+dilution +40,0.129,0.866

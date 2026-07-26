@@ -1,0 +1,8 @@
+,mean similarity to report,fraction evading (< tau)
+no attack,0.912,0.0
+dilution +20 words,0.82,0.017
+dilution +40 words,0.744,0.149
+dilution +80 words,0.659,0.309
+synonym (40),0.9,0.0
+homoglyph+leet,0.134,1.0
+homoglyph+leet + skeleton,0.814,0.034

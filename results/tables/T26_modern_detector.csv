@@ -1,0 +1,5 @@
+,value
+source-separability (scam vs list) acc,0.992
+modern detector F1,0.996
+modern detector recall,0.992
+modern detector precision,1.0

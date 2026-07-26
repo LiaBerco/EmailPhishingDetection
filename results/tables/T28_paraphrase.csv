@@ -1,0 +1,4 @@
+,recall on phishing (union)
+clean,0.998
+paraphrase,0.998
+paraphrase + skeleton-norm,0.997

@@ -1,0 +1,6 @@
+,clean recall,dilution(40) recall,ham FPR
+FPR budget 1%,0.998,0.357,0.0121
+FPR budget 3%,0.998,0.496,0.0303
+FPR budget 5%,0.998,0.555,0.0511
+FPR budget 10%,0.999,0.663,0.1025
+union-only (baseline),0.998,0.129,0.0012

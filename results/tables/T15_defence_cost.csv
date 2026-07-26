@@ -1,0 +1,5 @@
+,precision,recall,f1,FPR
+word: no defence,0.9968,0.9925,0.9946,0.0017
+word: + normalise,0.9909,0.993,0.992,0.0049
+union: no defence,0.9979,0.9979,0.9979,0.0012
+union: + normalise,0.9925,0.9979,0.9952,0.004

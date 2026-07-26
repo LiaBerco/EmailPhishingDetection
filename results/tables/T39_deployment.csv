@@ -1,0 +1,6 @@
+,value
+"single-e-mail latency, median (ms)",2.54
+"single-e-mail latency, p95 (ms)",5.82
+batch throughput (e-mails/sec),687.0
+model + vectoriser on disk (MB),2.7
+full retrain on 16k e-mails (sec),24.7

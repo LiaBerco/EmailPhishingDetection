@@ -1,0 +1,7 @@
+,precision,recall,FPR
+word: no defence,0.9968,0.9925,0.0017
+word: + old table,0.9909,0.993,0.0049
+word: + skeleton,0.9909,0.993,0.0049
+union: no defence,0.9979,0.9979,0.0012
+union: + old table,0.9925,0.9979,0.004
+union: + skeleton,0.9925,0.9979,0.004

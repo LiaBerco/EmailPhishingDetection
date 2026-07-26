@@ -1,0 +1,3 @@
+,recall on modern scams,recall on 2008 scams (forgetting?),false-alarm on modern normal (FPR)
+baseline (2008 model),0.147,0.998,0.001
+evolved (+ modern scams),0.98,0.998,0.007

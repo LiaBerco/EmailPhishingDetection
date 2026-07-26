@@ -1,0 +1,7 @@
+,word mean,word sd,word 95% CI,union mean,union sd
+homoglyph+leet,0.717,0.003,"[0.712, 0.721]",0.936,0.003
+homoglyph+leet + normalise,0.991,0.001,"[0.989, 0.992]",0.998,0.0
+full-width [held-out],0.68,0.001,"[0.677, 0.681]",0.921,0.002
+full-width [held-out] + normalise,0.993,0.0,"[0.993, 0.993]",0.998,0.0
+adaptive [unmapped],0.884,0.004,"[0.878, 0.889]",0.983,0.002
+adaptive [unmapped] + normalise,0.959,0.004,"[0.952, 0.965]",0.986,0.001

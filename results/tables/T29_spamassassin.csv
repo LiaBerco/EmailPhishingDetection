@@ -1,0 +1,5 @@
+,word recall,union recall
+clean,0.959,0.973
+homoglyph+leet,0.34,0.497
++ normalise,0.918,0.965
++ skeleton,0.918,0.965
