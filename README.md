@@ -84,6 +84,39 @@ Honest checks:
 
 All result tables are in `results/tables/`, all figures in `results/figures/`.
 
+## Improvements (build -> attack -> fix -> evolve)
+
+The project is an iterative loop; the full plain-language version is in
+`docs/IMPROVEMENTS_STORY.md`. In short:
+
+1. Built a TF-IDF + Logistic Regression detector - near-perfect on clean in-corpus mail
+   and explainable.
+2. Attacked it with imperceptible homoglyph and leetspeak swaps; the word-only model
+   collapsed.
+3. Fixed it with character n-grams and Unicode normalisation; the recovery even held on
+   an attack family it had never seen.
+4. Hardened it against an adaptive attacker by folding through the full Unicode
+   confusables set (UTS-39) instead of a hand-list.
+5. Checked reality: both a change of corpus and a jump to 2023-2025 mail break the lab
+   number; retraining on modern scams restores it with no forgetting.
+6. Closed a second attack class (word-level dilution) with a monotone model that cannot
+   be un-flagged by inserted text - a safety net beside the main model.
+7. Added a human-in-the-loop step: one reported email propagates to the rest of its
+   campaign.
+
+## Future work
+
+Directions I would take the content layer next, each grounded in the report's
+references:
+
+- A sentiment / urgency feature that scores emotional pressure as an extra signal.
+- Edit-distance (Levenshtein) matching against known brand words, to catch typo-style
+  obfuscation the character defence misses.
+- A self-updating attack database that retrains on newly confirmed attacks.
+- A semantic, meaning-based defence against LLM paraphrase attacks.
+- Fusing this content layer with the independent URL/sender layer - the whole point of
+  the two-part design.
+
 ## Repository layout
 
 ```
