@@ -9,7 +9,7 @@ text-obfuscation attacks (homoglyphs, leetspeak, full-width characters, word
 dilution). Predictions are written to `artifacts/` so they can later be fused with an
 independent URL/sender detector.
 
-The written report is in `report/main.pdf`. A plain-language walkthrough of the whole
+The written report is in `report/report.pdf`. A plain-language walkthrough of the whole
 build -> attack -> fix -> evolve story is in `docs/IMPROVEMENTS_STORY.md`.
 
 ## What the project answers
@@ -123,7 +123,7 @@ references:
 notebooks/content_detector.ipynb   the deliverable - runs end to end
 src/                               config, data, normalisation, attacks, models, explain
 docs/IMPROVEMENTS_STORY.md         plain-language build -> attack -> fix -> evolve story
-report/main.pdf                    the written report
+report/report.pdf                  the written report
 presentation/presentation.pptx     the slides (English + Hebrew speaker notes)
 results/tables/                    result tables (CSV)
 results/figures/                   figures (PNG)

@@ -23,7 +23,7 @@ venv/
 *.pt
 .cache/
 
-# latex build artifacts (only main.pdf is submitted)
+# latex build artifacts (only report.pdf is submitted)
 report/*.aux
 report/*.log
 report/*.blg
